@@ -1,0 +1,8 @@
+name "dub-benchmark"
+description "Benchmark various aspects of dub"
+authors "Per Nordlöw"
+copyright "Copyright © 2024, Per Nordlöw"
+license "BSL-1.0"
+dependency "dub" version="~>1.36.0"
+dependency "asdf" version="~>0.7.17"
+dflags "-dip1000" "-preview=in"

@@ -1,0 +1,16 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/dub-benchmark
+dub-benchmark.so
+dub-benchmark.dylib
+dub-benchmark.dll
+dub-benchmark.a
+dub-benchmark.lib
+dub-benchmark-test-*
+*.exe
+*.pdb
+*.o
+*.obj
+*.lst
