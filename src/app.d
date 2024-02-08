@@ -22,8 +22,6 @@ struct PackageRecipe {
 	string license;
 }
 
-// auto s = `{"a":[1, 2, 3]}`.deserializeJson!S;
-
 void main() {
 	const sm = SpanMode.shallow;
 	foreach (e1; dirEntries("~/.dub/packages/".expandTilde, sm)) {
