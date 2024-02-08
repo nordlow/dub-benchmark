@@ -37,13 +37,14 @@ void main() {
 
 					if (bn == "dub.json") {
 						StackFront!(2048, Mallocator) allocator;
+						alias Allocator = typeof(allocator);
 						try {
 							sw.reset();
 							sw.start();
 							const json = text.asdf_parseJson(allocator);
-							writeln("Pass: ", sw.peek, ": asdf.jsonparser.parseJson(", typeof(allocator).stringof, ") ", e4.name);
+							writeln("Pass: ", sw.peek, ": asdf.jsonparser.parseJson(", Allocator.stringof, ") ", e4.name);
 						} catch (Exception e) {
-							writeln("Fail:   ", ": asdf.jsonparser.parseJson(", typeof(allocator).stringof, ") ", e4.name);
+							writeln("Fail:   ", ": asdf.jsonparser.parseJson(", Allocator.stringof, ") ", e4.name);
 						}
 
 						try {
