@@ -31,7 +31,7 @@ void main() {
 						continue;
 
 					const text = cast(string)e4.name.read();
-					writeln("text.length: ", text.length);
+					writeln("- Recipe ", e4.name, " of size ", text.length, ":");
 
 					auto sw = StopWatch(AutoStart.yes);
 
@@ -42,18 +42,18 @@ void main() {
 							sw.reset();
 							sw.start();
 							const json = text.asdf_parseJson(allocator);
-							writeln("Pass: ", sw.peek, ": asdf.jsonparser.parseJson(", Allocator.stringof, ") ", e4.name);
+							writeln("  - Pass: ", sw.peek, ": asdf.jsonparser.parseJson(", Allocator.stringof, ")");
 						} catch (Exception e) {
-							writeln("Fail:   ", ": asdf.jsonparser.parseJson(", Allocator.stringof, ") ", e4.name);
+							writeln("  - Fail:   ", ": asdf.jsonparser.parseJson(", Allocator.stringof, ")");
 						}
 
 						try {
 							sw.reset();
 							sw.start();
 							const json = text.asdf_parseJson;
-							writeln("Pass: ", sw.peek, ": asdf.jsonparser.parseJson() ", e4.name);
+							writeln("  - Pass: ", sw.peek, ": asdf.jsonparser.parseJson()");
 						} catch (Exception e) {
-							writeln("Fail: ", sw.peek, ": asdf.jsonparser.parseJson() ", e4.name);
+							writeln("  - Fail: ", sw.peek, ": asdf.jsonparser.parseJson()");
 						}
 
 						try
@@ -61,9 +61,9 @@ void main() {
 							sw.reset();
 							sw.start();
 							const json = text.parseJSON;
-							writeln("Pass: ", sw.peek, ": std.json.parseJSON() ", e4.name);
+							writeln("  - Pass: ", sw.peek, ": std.json.parseJSON()");
 						} catch (Exception e) {
-							writeln("Fail: ", sw.peek, ": std.json.parseJSON() ", e4.name);
+							writeln("  - Fail: ", sw.peek, ": std.json.parseJSON()");
 						}
 					}
 
@@ -72,9 +72,9 @@ void main() {
 						sw.start();
 						auto pr =  parsePackageRecipe(text, e4.name);
 						const span = sw.peek;
-						writeln("Pass: ", sw.peek, ": parsePackageRecipe() ", e4.name);
+						writeln("  - Pass: ", sw.peek, ": parsePackageRecipe()");
 					} catch (Exception _) {
-						writeln("Fail: ", sw.peek, ": parsePackageRecipe() ", e4.name);
+						writeln("  - Fail: ", sw.peek, ": parsePackageRecipe()");
 					}
 
 					writeln();
