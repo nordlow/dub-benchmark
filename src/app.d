@@ -15,16 +15,11 @@ import mir.serde; // `serdeOptional` etc
 
 import mir.deser.json: deserializeJson;
 
-struct SourcePath {
-	string value;
-	alias value this;
-}
-
 struct PackageRecipe {
-	@serdeAnnotation @serdeOptional
+	@serdeAnnotation @serdeRequired
 	string name;
+	@serdeAnnotation @serdeOptional
 	string license;
-	SourcePath[] sourcePaths;
 }
 
 // auto s = `{"a":[1, 2, 3]}`.deserializeJson!S;
