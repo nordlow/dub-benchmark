@@ -1,5 +1,5 @@
 name "dub-benchmark"
-description "Benchmark various aspects of dub"
+description "Analyze and benchmark various aspects of dub"
 authors "Per Nordlöw"
 copyright "Copyright © 2024, Per Nordlöw"
 license "BSL-1.0"
