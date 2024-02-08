@@ -14,6 +14,7 @@ import asdf.jsonparser : asdf_parseJson = parseJson;
 import mir.serde; // `serdeOptional` etc
 
 import mir.deser.json: deserializeJson;
+import mir.algebraic_alias.json : JsonAlgebraic;
 
 struct PackageRecipe {
 	@serdeAnnotation @serdeRequired
@@ -48,15 +49,6 @@ void main() {
 					auto sw = StopWatch(AutoStart.yes);
 
 					if (bn == "dub.json") {
-						try {
-							sw.reset();
-							sw.start();
-							const json = text.deserializeJson!PackageRecipe;
-							writeln("  - Pass: ", sw.peek, ": mir.deser.json.deserializeJson!PackageRecipe()");
-						} catch (Exception e) {
-							writeln("  - Fail: ", sw.peek, ": mir.deser.json.deserializeJson!PackageRecipe()");
-						}
-
 						StackFront!(2048, Mallocator) allocator;
 						alias Allocator = typeof(allocator);
 						try {
@@ -75,6 +67,15 @@ void main() {
 							writeln("  - Pass: ", sw.peek, ": asdf.jsonparser.parseJson()");
 						} catch (Exception e) {
 							writeln("  - Fail: ", sw.peek, ": asdf.jsonparser.parseJson()");
+						}
+
+						try {
+							sw.reset();
+							sw.start();
+							const json = text.deserializeJson!JsonAlgebraic;
+							writeln("  - Pass: ", sw.peek, ": mir.deser.json.deserializeJson!JsonAlgebraic()");
+						} catch (Exception e) {
+							writeln("  - Fail: ", sw.peek, ": mir.deser.json.deserializeJson!JsonAlgebraic()");
 						}
 
 						try
