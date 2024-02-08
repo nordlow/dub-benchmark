@@ -4,8 +4,8 @@ This benchmark parses dub recipes (`dub.json` and `dub.sdl`) under
 `~/.dub/packages/` using either `std.json`, `asdf.jsonparser`, and
 `dub.recipe.io : parsePackageRecipe`.
 
-A single dub packages fails to parse it's non-JSON-compliant dub.json (resolved
-by https://github.com/rikkimax/ctfepp/pull/3).
+A single non-JSON-compliant `dub.json` fails to parse (resolved by
+https://github.com/rikkimax/ctfepp/pull/3).
 
 Run release build benchmark as
 
