@@ -5,7 +5,13 @@ import dub.recipe.packagerecipe;
 // import dub.recipe.json : dub_parseJson = parseJson;
 // import dub.recipe.sdl : parseSDL;
 import dub.recipe.io : parsePackageRecipe;
+
+import std.experimental.allocator.mallocator: Mallocator;
+import std.experimental.allocator.showcase: StackFront;
 import asdf.jsonparser : asdf_parseJson = parseJson;
+
+// StackFront!(1024, Mallocator) allocator;
+// auto json = parseJson(`{"ak": {"sub": "subval"} }`, allocator);
 
 void main() {
 	const sm = SpanMode.shallow;
@@ -28,26 +34,38 @@ void main() {
 						continue;
 
 					const text = cast(string)e4.name.read();
+					writeln("text.length: ", text.length);
 
 					auto sw = StopWatch(AutoStart.yes);
 
 					if (bn == "dub.json") {
+						StackFront!(2048, Mallocator) allocator;
+						try {
+							sw.reset();
+							sw.start();
+							const json = text.asdf_parseJson(allocator);
+							writeln("Pass: ", sw.peek, ": asdf.jsonparser.parseJson(", typeof(allocator).stringof, ") ", e4.name);
+						} catch (Exception e) {
+							writeln("Fail:   ", ": asdf.jsonparser.parseJson(", typeof(allocator).stringof, ") ", e4.name);
+						}
+
 						try {
 							sw.reset();
 							sw.start();
 							const json = text.asdf_parseJson;
-							writeln("arsd.jsonparser.parseJson ", e4.name, " succeeded after ", sw.peek);
+							writeln("Pass: ", sw.peek, ": asdf.jsonparser.parseJson() ", e4.name);
 						} catch (Exception e) {
-							writeln("arsd.jsonparser.parseJson ", e4.name, " failed");
+							writeln("Fail: ", sw.peek, ": asdf.jsonparser.parseJson() ", e4.name);
 						}
+
 						try
 						{
 							sw.reset();
 							sw.start();
 							const json = text.parseJSON;
-							writeln("std.json.parseJSON ", e4.name, " succeeded after ", sw.peek);
+							writeln("Pass: ", sw.peek, ": std.json.parseJSON() ", e4.name);
 						} catch (Exception e) {
-							writeln("std.json.parseJSON ", e4.name, " failed");
+							writeln("Fail: ", sw.peek, ": std.json.parseJSON() ", e4.name);
 						}
 					}
 
@@ -56,9 +74,9 @@ void main() {
 						sw.start();
 						auto pr =  parsePackageRecipe(text, e4.name);
 						const span = sw.peek;
-						writeln("parsePackageRecipe ", e4.name, " succeeded after ", span);
+						writeln("Pass: ", sw.peek, ": parsePackageRecipe() ", e4.name);
 					} catch (Exception _) {
-						writeln("parsePackageRecipe ", e4.name, " failed");
+						writeln("Fail: ", sw.peek, ": parsePackageRecipe() ", e4.name);
 					}
 
 					writeln();
