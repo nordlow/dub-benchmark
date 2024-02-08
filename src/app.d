@@ -10,9 +10,6 @@ import std.experimental.allocator.mallocator: Mallocator;
 import std.experimental.allocator.showcase: StackFront;
 import asdf.jsonparser : asdf_parseJson = parseJson;
 
-// StackFront!(1024, Mallocator) allocator;
-// auto json = parseJson(`{"ak": {"sub": "subval"} }`, allocator);
-
 void main() {
 	const sm = SpanMode.shallow;
 	foreach (e1; dirEntries("~/.dub/packages/".expandTilde, sm)) {
