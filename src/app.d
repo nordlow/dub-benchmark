@@ -23,7 +23,26 @@ struct PackageRecipe {
 	string license;
 }
 
+/++ DUB Package Name.
+ +/
+struct PackageName {
+	string value;
+	alias value this;
+}
+
+static immutable url = "https://code.dlang.org/packages/index.json";
+
+/++ Get all DUB package names registered on code.dlang.org.
+ +/
+auto getPackageNames() @trusted {
+	import std.algorithm : map;
+	import std.json : parseJSON;
+	import std.net.curl : get;
+	return url.get.parseJSON.array.map!(a => PackageName(a.str));
+}
+
 void main() {
+	const names = getPackageNames.array;
 	const sm = SpanMode.shallow;
 	foreach (e1; dirEntries("~/.dub/packages/".expandTilde, sm)) {
 		if (!e1.isDir)
@@ -84,6 +103,10 @@ void main() {
 							sw.start();
 							const json = text.parseJSON;
 							writeln("  - Pass: ", sw.peek, ": std.json.parseJSON()");
+							const name = json.object["name"].str;
+							if (!names.canFind(name)) {
+								writeln("Warning: Name ", name, " not found in ", url);
+							}
 						} catch (Exception e) {
 							writeln("  - Fail: ", sw.peek, ": std.json.parseJSON()");
 						}
