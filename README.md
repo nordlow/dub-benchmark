@@ -7,9 +7,17 @@ This benchmark parses dub recipes (`dub.json` and `dub.sdl`) under
 A single non-JSON-compliant `dub.json` fails to parse (resolved by
 https://github.com/rikkimax/ctfepp/pull/3).
 
-Run release build benchmark as
+Run release build benchmark either as
 
 `dub run --build=release --compiler=ldc2`
+
+or
+
+`DFLAGS='-mattr=+sse4.2' dub -v run --compiler=ldc2 --build=release`
+
+to utilize SSE 4.2 optimizations in asdf.
+
+For debug build run as.
 
 or debug build benchmark as
 
