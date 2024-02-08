@@ -8,7 +8,26 @@ import dub.recipe.io : parsePackageRecipe;
 
 import std.experimental.allocator.mallocator: Mallocator;
 import std.experimental.allocator.showcase: StackFront;
+
 import asdf.jsonparser : asdf_parseJson = parseJson;
+
+import mir.serde; // `serdeOptional` etc
+
+import mir.deser.json: deserializeJson;
+
+struct SourcePath {
+	string value;
+	alias value this;
+}
+
+struct PackageRecipe {
+	@serdeAnnotation @serdeOptional
+	string name;
+	string license;
+	SourcePath[] sourcePaths;
+}
+
+// auto s = `{"a":[1, 2, 3]}`.deserializeJson!S;
 
 void main() {
 	const sm = SpanMode.shallow;
@@ -36,6 +55,15 @@ void main() {
 					auto sw = StopWatch(AutoStart.yes);
 
 					if (bn == "dub.json") {
+						try {
+							sw.reset();
+							sw.start();
+							const json = text.deserializeJson!PackageRecipe;
+							writeln("  - Pass: ", sw.peek, ": mir.deser.json.deserializeJson!PackageRecipe()");
+						} catch (Exception e) {
+							writeln("  - Fail: ", sw.peek, ": mir.deser.json.deserializeJson!PackageRecipe()");
+						}
+
 						StackFront!(2048, Mallocator) allocator;
 						alias Allocator = typeof(allocator);
 						try {
