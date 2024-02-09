@@ -14,3 +14,4 @@ dub-benchmark-test-*
 *.o
 *.obj
 *.lst
+perf.data*
