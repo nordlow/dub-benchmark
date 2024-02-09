@@ -1,7 +1,7 @@
 import std;
 import std.datetime.stopwatch : StopWatch, AutoStart;
 
-import dub.recipe.packagerecipe;
+// import dub.recipe.packagerecipe;
 // import dub.recipe.json : dub_parseJson = parseJson;
 // import dub.recipe.sdl : parseSDL;
 import dub.recipe.io : parsePackageRecipe;
@@ -16,11 +16,145 @@ import mir.serde; // `serdeOptional` etc
 import mir.deser.json: deserializeJson;
 import mir.algebraic_alias.json : JsonAlgebraic;
 
+alias Name = serdeKeys;
+
 struct PackageRecipe {
-	@serdeAnnotation @serdeRequired
+	/**
+	 * Name of the package, used to uniquely identify the package.
+	 *
+	 * This field is the only mandatory one.
+	 * Must be comprised of only lower case ASCII alpha-numeric characters,
+	 * "-" or "_".
+	 */
 	string name;
-	@serdeAnnotation @serdeOptional
-	string license;
+
+	/// Brief description of the package.
+	@serdeOptional string description;
+
+	/// URL of the project website
+	@serdeOptional string homepage;
+
+	/**
+	 * List of project authors
+	 *
+	 * the suggested format is either:
+	 * "Peter Parker"
+	 * or
+	 * "Peter Parker <pparker@example.com>"
+	 */
+	@serdeOptional string[] authors;
+
+	/// Copyright declaration string
+	@serdeOptional string copyright;
+
+	/// License(s) under which the project can be used
+	@serdeOptional string license;
+
+	/// Set of version requirements for DUB, compilers and/or language frontend.
+	version (none) @serdeOptional ToolchainRequirements toolchainRequirements;
+
+	/**
+	 * Specifies an optional list of build configurations
+	 *
+	 * By default, the first configuration present in the package recipe
+	 * will be used, except for special configurations (e.g. "unittest").
+	 * A specific configuration can be chosen from the command line using
+	 * `--config=name` or `-c name`. A package can select a specific
+	 * configuration in one of its dependency by using the `subConfigurations`
+	 * build setting.
+	 * Build settings defined at the top level affect all configurations.
+	 */
+	version (none) @serdeOptional @serdeKeys("name") ConfigurationInfo[] configurations;
+
+	/**
+	 * Defines additional custom build types or overrides the default ones
+	 *
+	 * Build types can be selected from the command line using `--build=name`
+	 * or `-b name`. The default build type is `debug`.
+	 */
+	version (none) @serdeOptional BuildSettingsTemplate[string] buildTypes;
+
+	/**
+	 * Build settings influence the command line arguments and options passed
+	 * to the compiler and linker.
+	 *
+	 * All build settings can be present at the top level, and are optional.
+	 * Build settings can also be found in `configurations`.
+	 */
+	version (none) @serdeOptional BuildSettingsTemplate buildSettings;
+	version (none) alias buildSettings this;
+
+	/**
+	 * Specifies a list of command line flags usable for controlling
+	 * filter behavior for `--build=ddox` [experimental]
+	 */
+	@serdeOptional @Name("-ddoxFilterArgs") string[] ddoxFilterArgs;
+
+	/// Specify which tool to use with `--build=ddox` (experimental)
+	@serdeOptional @Name("-ddoxTool") string ddoxTool;
+
+	/**
+	 * Sub-packages path or definitions
+	 *
+	 * Sub-packages allow to break component of a large framework into smaller
+	 * packages. In the recipe file, sub-packages entry can take one of two forms:
+	 * either the path to a sub-folder where a recipe file exists,
+	 * or an object of the same format as a recipe file (or `PackageRecipe`).
+	 */
+	version (none) @serdeOptional SubPackage[] subPackages;
+
+	/// Usually unused by users, this is set by dub automatically
+	@serdeOptional @Name("version") string version_;
+
+	version (none)
+	inout(ConfigurationInfo) getConfiguration(string name)
+	inout {
+		foreach (c; configurations)
+			if (c.name == name)
+				return c;
+		throw new Exception("Unknown configuration: "~name);
+	}
+
+	/** Clones the package recipe recursively.
+	 */
+	version (none)
+	PackageRecipe clone() const { return .clone(this); }
+}
+
+/// Bundles information about a build configuration.
+version (none)
+struct ConfigurationInfo {
+	string name;
+	@serdeOptional string[] platforms;
+	@serdeOptional BuildSettingsTemplate buildSettings;
+	alias buildSettings this;
+
+	/**
+	 * Equivalent to the default constructor, used by Configy
+	 */
+	this(string name, string[] p, BuildSettingsTemplate build_settings)
+		@safe pure nothrow @nogc
+	{
+		this.name = name;
+		this.platforms = p;
+		this.buildSettings = build_settings;
+	}
+
+	this(string name, BuildSettingsTemplate build_settings)
+	{
+		enforce(!name.empty, "Configuration name is empty.");
+		this.name = name;
+		this.buildSettings = build_settings;
+	}
+
+	bool matchesPlatform(in BuildPlatform platform)
+	const {
+		if( platforms.empty ) return true;
+		foreach(p; platforms)
+			if (platform.matchesSpecification(p))
+				return true;
+		return false;
+	}
 }
 
 /++ DUB Package Name.
@@ -96,6 +230,15 @@ void main() {
 							writeln("  - Pass: ", sw.peek, ": mir.deser.json.deserializeJson!JsonAlgebraic()");
 						} catch (Exception e) {
 							writeln("  - Fail: ", sw.peek, ": mir.deser.json.deserializeJson!JsonAlgebraic()");
+						}
+
+						try {
+							sw.reset();
+							sw.start();
+							const json = text.deserializeJson!PackageRecipe;
+							writeln("  - Pass: ", sw.peek, ": mir.deser.json.deserializeJson!PackageRecipe()");
+						} catch (Exception e) {
+							writeln("  - Fail: ", sw.peek, ": mir.deser.json.deserializeJson!PackageRecipe()");
 						}
 
 						try
