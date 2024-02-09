@@ -42,7 +42,8 @@ auto getPackageNames() @trusted {
 }
 
 void main() {
-	const names = getPackageNames.array;
+	const bool checkName = false;
+	const names = checkName ? getPackageNames.array : [];
 	const sm = SpanMode.shallow;
 	foreach (e1; dirEntries("~/.dub/packages/".expandTilde, sm)) {
 		if (!e1.isDir)
@@ -103,9 +104,11 @@ void main() {
 							sw.start();
 							const json = text.parseJSON;
 							writeln("  - Pass: ", sw.peek, ": std.json.parseJSON()");
-							const name = json.object["name"].str;
-							if (!names.canFind(name)) {
-								writeln("Warning: Name ", name, " not found in ", url);
+							if (checkName) {
+								const name = json.object["name"].str;
+								if (!names.canFind(name)) {
+									writeln("Warning: Name ", name, " not found in ", url);
+								}
 							}
 						} catch (Exception e) {
 							writeln("  - Fail: ", sw.peek, ": std.json.parseJSON()");
