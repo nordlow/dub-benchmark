@@ -227,7 +227,7 @@ void main() {
 						try {
 							sw.reset();
 							sw.start();
-							const json = text.deserializeJson!JsonAlgebraic;
+							const ja = text.deserializeJson!JsonAlgebraic;
 							writeln("  - Pass: ", sw.peek, ": mir.deser.json.deserializeJson!JsonAlgebraic()");
 						} catch (Exception e) {
 							writeln("  - Fail: ", sw.peek, ": mir.deser.json.deserializeJson!JsonAlgebraic()");
@@ -236,7 +236,7 @@ void main() {
 						try {
 							sw.reset();
 							sw.start();
-							const json = text.deserializeJson!PackageRecipe;
+							const pr = text.deserializeJson!PackageRecipe;
 							writeln("  - Pass: ", sw.peek, ": mir.deser.json.deserializeJson!PackageRecipe()");
 						} catch (Exception e) {
 							writeln("  - Fail: ", sw.peek, ": mir.deser.json.deserializeJson!PackageRecipe() with exception:\n", e.toString);
