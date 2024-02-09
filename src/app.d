@@ -18,6 +18,7 @@ import mir.algebraic_alias.json : JsonAlgebraic;
 
 alias Name = serdeKeys;
 
+@serdeIgnoreUnexpectedKeys
 struct PackageRecipe {
 	/**
 	 * Name of the package, used to uniquely identify the package.
@@ -238,7 +239,7 @@ void main() {
 							const json = text.deserializeJson!PackageRecipe;
 							writeln("  - Pass: ", sw.peek, ": mir.deser.json.deserializeJson!PackageRecipe()");
 						} catch (Exception e) {
-							writeln("  - Fail: ", sw.peek, ": mir.deser.json.deserializeJson!PackageRecipe()");
+							writeln("  - Fail: ", sw.peek, ": mir.deser.json.deserializeJson!PackageRecipe() with exception:\n", e.toString);
 						}
 
 						try
