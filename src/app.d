@@ -176,13 +176,48 @@ auto getPackageNames() @trusted {
 	return url.get.parseJSON.array.map!(a => PackageName(a.str));
 }
 
+/++ Duration statistics.
+ +/
+@safe struct DurationStat {
+	Duration _min = Duration.max;
+	Duration _max = Duration.min;;
+	Duration _sum;
+	void add(in Duration dur) pure nothrow @nogc {
+		_min = min(_min, dur);
+		_min = max(_min, dur);
+		_sum += dur;
+	}
+}
+
+alias DurationStats = DurationStat[PackageName];
+
+void add(DurationStats stats, PackageName pn, in Duration dur) {
+	if (auto ds = pn in stats) {
+		ds.add(dur);
+	} else {
+		DurationStat stat;
+		stat.add(dur);
+		stats[pn] = stat;
+	}
+}
+
+void prettyPrint(in DurationStats stats) {
+	foreach (const ref kv; stats.byKeyValue) {
+		writeln(kv.key, kv.value);
+	}
+}
+
 void main() {
 	const bool checkName = false;
 	const names = checkName ? getPackageNames.array : [];
 	const sm = SpanMode.shallow;
+
+	DurationStats stats_parsePackageRecipe;
+
 	foreach (e1; dirEntries("~/.dub/packages/".expandTilde, sm)) {
 		if (!e1.isDir)
 			continue;
+		const packageName = PackageName(e1.name.baseName);
 		foreach (e2; dirEntries(e1.name, sm)) {
 			if (!e2.isDir)
 				continue;
@@ -263,8 +298,9 @@ void main() {
 						sw.reset();
 						sw.start();
 						auto pr =  parsePackageRecipe(text, e4.name);
-						const span = sw.peek;
-						writeln("  - Pass: ", sw.peek, ": parsePackageRecipe()");
+						const dur = sw.peek;
+						stats_parsePackageRecipe.add(packageName, dur);
+						writeln("  - Pass: ", dur, ": parsePackageRecipe()");
 					} catch (Exception _) {
 						writeln("  - Fail: ", sw.peek, ": parsePackageRecipe()");
 					}
@@ -274,4 +310,6 @@ void main() {
 			}
 		}
 	}
+
+	stats_parsePackageRecipe.prettyPrint();
 }
