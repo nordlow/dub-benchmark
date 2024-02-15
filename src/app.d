@@ -238,36 +238,36 @@ void main() {
 							sw.reset();
 							sw.start();
 							const json = text.asdf_parseJson(allocator);
-							writeln("  - Pass: ", sw.peek, ": asdf.jsonparser.parseJson(", Allocator.stringof, ")");
+							writeln("- Pass: ", sw.peek, ": asdf.jsonparser.parseJson(", Allocator.stringof, ")");
 						} catch (Exception e) {
-							writeln("  - Fail:   ", ": asdf.jsonparser.parseJson(", Allocator.stringof, ")");
+							writeln("- Fail:   ", ": asdf.jsonparser.parseJson(", Allocator.stringof, ")");
 						}
 
 						try {
 							sw.reset();
 							sw.start();
 							const json = text.asdf_parseJson;
-							writeln("  - Pass: ", sw.peek, ": asdf.jsonparser.parseJson()");
+							writeln("- Pass: ", sw.peek, ": asdf.jsonparser.parseJson()");
 						} catch (Exception e) {
-							writeln("  - Fail: ", sw.peek, ": asdf.jsonparser.parseJson()");
+							writeln("- Fail: ", sw.peek, ": asdf.jsonparser.parseJson()");
 						}
 
 						try {
 							sw.reset();
 							sw.start();
 							const ja = text.deserializeJson!JsonAlgebraic;
-							writeln("  - Pass: ", sw.peek, ": mir.deser.json.deserializeJson!JsonAlgebraic()");
+							writeln("- Pass: ", sw.peek, ": mir.deser.json.deserializeJson!JsonAlgebraic()");
 						} catch (Exception e) {
-							writeln("  - Fail: ", sw.peek, ": mir.deser.json.deserializeJson!JsonAlgebraic()");
+							writeln("- Fail: ", sw.peek, ": mir.deser.json.deserializeJson!JsonAlgebraic()");
 						}
 
 						try {
 							sw.reset();
 							sw.start();
 							const pr = text.deserializeJson!PackageRecipe;
-							writeln("  - Pass: ", sw.peek, ": mir.deser.json.deserializeJson!PackageRecipe()");
+							writeln("- Pass: ", sw.peek, ": mir.deser.json.deserializeJson!PackageRecipe()");
 						} catch (Exception e) {
-							writeln("  - Fail: ", sw.peek, ": mir.deser.json.deserializeJson!PackageRecipe() with exception:\n", e.toString);
+							writeln("- Fail: ", sw.peek, ": mir.deser.json.deserializeJson!PackageRecipe() with exception:\n", e.toString);
 						}
 
 						try
@@ -275,7 +275,7 @@ void main() {
 							sw.reset();
 							sw.start();
 							const json = text.parseJSON;
-							writeln("  - Pass: ", sw.peek, ": std.json.parseJSON()");
+							writeln("- Pass: ", sw.peek, ": std.json.parseJSON()");
 							if (checkName) {
 								const name = json.object["name"].str;
 								if (!names.canFind(name)) {
@@ -283,7 +283,7 @@ void main() {
 								}
 							}
 						} catch (Exception e) {
-							writeln("  - Fail: ", sw.peek, ": std.json.parseJSON()");
+							writeln("- Fail: ", sw.peek, ": std.json.parseJSON()");
 						}
 					}
 
@@ -293,9 +293,9 @@ void main() {
 						auto pr =  parsePackageRecipe(text, e4.name);
 						const dur = sw.peek;
 						stat_parsePackageRecipe.add(dur);
-						writeln("  - Pass: ", dur, ": parsePackageRecipe()");
+						writeln("- Pass: ", dur, ": parsePackageRecipe()");
 					} catch (Exception _) {
-						writeln("  - Fail: ", sw.peek, ": parsePackageRecipe()");
+						writeln("- Fail: ", sw.peek, ": parsePackageRecipe()");
 					}
 				}
 			}
