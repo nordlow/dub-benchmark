@@ -185,7 +185,7 @@ auto getPackageNames() @trusted {
 	size_t _count;
 	void add(in Duration dur) pure nothrow @nogc {
 		_min = min(_min, dur);
-		_min = max(_min, dur);
+		_max = max(_max, dur);
 		_sum += dur;
 		_count += 1;
 	}
