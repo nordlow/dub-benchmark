@@ -191,7 +191,7 @@ auto getPackageNames() @trusted {
 
 alias DurationStats = DurationStat[PackageName];
 
-void add(DurationStats stats, PackageName pn, in Duration dur) {
+void add(ref DurationStats stats, PackageName pn, in Duration dur) {
 	if (auto ds = pn in stats) {
 		ds.add(dur);
 	} else {
