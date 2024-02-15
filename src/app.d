@@ -182,29 +182,20 @@ auto getPackageNames() @trusted {
 	Duration _min = Duration.max;
 	Duration _max = Duration.min;;
 	Duration _sum;
+	size_t _count;
 	void add(in Duration dur) pure nothrow @nogc {
 		_min = min(_min, dur);
 		_min = max(_min, dur);
 		_sum += dur;
+		_count += 1;
 	}
 }
 
-alias DurationStats = DurationStat[PackageName];
-
-void add(ref DurationStats stats, PackageName pn, in Duration dur) {
-	if (auto ds = pn in stats) {
-		ds.add(dur);
-	} else {
-		DurationStat stat;
-		stat.add(dur);
-		stats[pn] = stat;
-	}
-}
-
-void prettyPrint(in DurationStats stats) {
-	foreach (const ref kv; stats.byKeyValue) {
-		writeln(kv.key, kv.value);
-	}
+void prettyPrint(in DurationStat stat, in char[] fn) {
+	writeln("- function: ", fn);
+	writeln("  - min: ", stat._min);
+	writeln("  - max: ", stat._max);
+	writeln("  - avg: ", stat._sum / stat._count);
 }
 
 void main() {
@@ -212,7 +203,7 @@ void main() {
 	const names = checkName ? getPackageNames.array : [];
 	const sm = SpanMode.shallow;
 
-	DurationStats stats_parsePackageRecipe;
+	DurationStat stat_parsePackageRecipe;
 
 	foreach (e1; dirEntries("~/.dub/packages/".expandTilde, sm)) {
 		if (!e1.isDir)
@@ -299,7 +290,7 @@ void main() {
 						sw.start();
 						auto pr =  parsePackageRecipe(text, e4.name);
 						const dur = sw.peek;
-						stats_parsePackageRecipe.add(packageName, dur);
+						stat_parsePackageRecipe.add(dur);
 						writeln("  - Pass: ", dur, ": parsePackageRecipe()");
 					} catch (Exception _) {
 						writeln("  - Fail: ", sw.peek, ": parsePackageRecipe()");
@@ -311,5 +302,5 @@ void main() {
 		}
 	}
 
-	stats_parsePackageRecipe.prettyPrint();
+	stat_parsePackageRecipe.prettyPrint("parsePackageRecipe");
 }
