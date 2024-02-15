@@ -192,10 +192,10 @@ auto getPackageNames() @trusted {
 }
 
 void prettyPrint(in DurationStat stat, in char[] fn) {
-	writeln("- Function: ", fn);
-	writeln("  - min: ", stat._min);
-	writeln("  - max: ", stat._max);
-	writeln("  - avg: ", stat._sum / stat._count);
+	writeln("## Function: ", fn);
+	writeln("   - min: ", stat._min);
+	writeln("   - max: ", stat._max);
+	writeln("   - avg: ", stat._sum / stat._count);
 }
 
 void main() {
@@ -302,5 +302,6 @@ void main() {
 		}
 	}
 
+	writeln("# Statistics:");
 	stat_parsePackageRecipe.prettyPrint("parsePackageRecipe");
 }
