@@ -205,6 +205,8 @@ void main() {
 
 	DurationStat stat_parsePackageRecipe;
 
+	writeln("# Individuals:\n");
+
 	foreach (e1; dirEntries("~/.dub/packages/".expandTilde, sm)) {
 		if (!e1.isDir)
 			continue;
@@ -225,7 +227,7 @@ void main() {
 						continue;
 
 					const text = cast(string)e4.name.read();
-					writeln("- Recipe ", e4.name, " of size ", text.length, ":");
+					writeln("## Recipe ", e4.name, " of size ", text.length, ":");
 
 					auto sw = StopWatch(AutoStart.yes);
 
@@ -302,6 +304,6 @@ void main() {
 		}
 	}
 
-	writeln("# Statistics:");
+	writeln("# Statistics:\n");
 	stat_parsePackageRecipe.prettyPrint("parsePackageRecipe");
 }
