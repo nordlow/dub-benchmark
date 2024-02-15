@@ -205,7 +205,7 @@ void main() {
 
 	DurationStat stat_parsePackageRecipe;
 
-	writeln("# Individuals:\n");
+	writeln("# Individuals:");
 
 	foreach (e1; dirEntries("~/.dub/packages/".expandTilde, sm)) {
 		if (!e1.isDir)
@@ -297,13 +297,11 @@ void main() {
 					} catch (Exception _) {
 						writeln("  - Fail: ", sw.peek, ": parsePackageRecipe()");
 					}
-
-					writeln();
 				}
 			}
 		}
 	}
 
-	writeln("# Statistics:\n");
+	writeln("# Statistics:");
 	stat_parsePackageRecipe.prettyPrint("parsePackageRecipe");
 }
