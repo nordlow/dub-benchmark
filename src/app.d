@@ -203,6 +203,7 @@ void main() {
 	const names = checkName ? getPackageNames.array : [];
 	const sm = SpanMode.shallow;
 
+	DurationStat stat_mir_ion;
 	DurationStat stat_parsePackageRecipe;
 
 	writeln("# Individuals:");
@@ -265,7 +266,9 @@ void main() {
 							sw.reset();
 							sw.start();
 							const pr = text.deserializeJson!PackageRecipe;
-							writeln("- Pass: ", sw.peek, ": mir.deser.json.deserializeJson!PackageRecipe()");
+							const dur = sw.peek;
+							stat_mir_ion.add(dur);
+							writeln("- Pass: ", dur, ": mir.deser.json.deserializeJson!PackageRecipe()");
 						} catch (Exception e) {
 							writeln("- Fail: ", sw.peek, ": mir.deser.json.deserializeJson!PackageRecipe() with exception:\n", e.toString);
 						}
@@ -303,5 +306,6 @@ void main() {
 	}
 
 	writeln("# Statistics:");
+	stat_mir_ion.prettyPrint("mir.deser.json.deserializeJson!PackageRecipe");
 	stat_parsePackageRecipe.prettyPrint("parsePackageRecipe");
 }
