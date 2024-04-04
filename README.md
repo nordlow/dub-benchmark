@@ -21,7 +21,7 @@ For debug build run as.
 
 or debug build benchmark as
 
-`dub run --build=debu --compiler=dmd`
+`dub run --build=debug --compiler=dmd`
 
 .
 
